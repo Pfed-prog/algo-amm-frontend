@@ -1,7 +1,6 @@
-import { Home, Replace, Droplet } from "tabler-icons-react";
+import { Replace, Droplet } from "tabler-icons-react";
 const links = [
-  { label: "Home", icon: Home, link: "/" },
-  { label: "Swap", icon: Replace, link: "/swap" },
+  { label: "Swap", icon: Replace, link: "/" },
   { label: "Pools", icon: Droplet, link: "/pools" },
 ];
 
