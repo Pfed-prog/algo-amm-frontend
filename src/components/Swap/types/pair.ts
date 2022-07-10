@@ -1,6 +1,6 @@
 export type Coin = {
   token: string;
-  amount: number;
+  amount?: number;
 };
 export type Pair = {
   token_1: Coin;
