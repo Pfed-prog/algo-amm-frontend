@@ -5,7 +5,6 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": false,
     "skipLibCheck": true,
-    "jsxImportSource": "@emotion/react",
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -17,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "types"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

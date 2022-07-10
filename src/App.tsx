@@ -1,32 +1,36 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AppShell, Navbar, Header } from "@mantine/core";
+import { AppShell, useMantineTheme } from "@mantine/core";
 import HomePage from "./pages/Home";
 import NotFoundPage from "./pages/NotFound";
+import Sidebar from "./components/Layout/Sidebar";
+import Heading from "./components/Layout/Heading";
+import Pools from "./pages/Pools";
+import Swap from "./pages/Swap";
 function App() {
+  const theme = useMantineTheme();
   return (
     <BrowserRouter>
       <AppShell
-        padding="md"
-        header={
-          <Header height={60} p="xs">
-            {/* Header content */}
-          </Header>
-        }
-        styles={(theme) => ({
+        styles={{
           main: {
-            backgroundColor:
+            background:
               theme.colorScheme === "dark"
                 ? theme.colors.dark[8]
                 : theme.colors.gray[0],
           },
-        })}
+        }}
+        navbarOffsetBreakpoint="sm"
+        asideOffsetBreakpoint="sm"
+        fixed
+        navbar={<Sidebar />}
+        header={<Heading />}
       >
-        <div style={{ flexGrow: 1 }}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/swap" element={<Swap />} />
+          <Route path="/pools" element={<Pools />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </AppShell>
     </BrowserRouter>
   );
