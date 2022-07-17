@@ -1,8 +1,10 @@
 import { Paper, Stack, Button } from "@mantine/core";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import AmountContainer from "./AmountContainer";
 import { connectToMyAlgo } from "../../lib/connectWallet";
 import { useStore } from "../../store";
-
+import { appId, usdcId, contractAddress } from "../../contracts";
+import { Coin } from "./types/pair";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 
@@ -12,42 +14,53 @@ const algodToken = {
   "X-API-Key": "megX3xJK3V4p3ajxgjedO3EGhHcb0STgaWGpKUzh",
 };
 
-const assetId = 10458941;
-const appId = 99469003;
-const Contract = "LULYN25HTMQ4JUCBQKSU7P2T7YWCNXMBLBQBPE7BKK2OSXJSZY4BMKDCIE";
-
 const Pools = () => {
+  const [algoCoin, setAlgoCoin] = useState<Coin>({
+    token: "USDC",
+  });
+  const yesToken = useStore((state) => state.yesToken);
+  const noToken = useStore((state) => state.noToken);
+  const poolToken = useStore((state) => state.poolToken);
+  const yesTokenReserves = useStore((state) => state.yesTokenReserves);
+  const noTokenReserves = useStore((state) => state.noTokenReserves);
+  const selectedAddress = useStore((state) => state.selectedAddress);
   const setAddresses = useStore((state) => state.setAddresses);
   const selectAddress = useStore((state) => state.selectAddress);
-  const selectedAddress = useStore((state) => state.selectedAddress);
+  const setYesToken = useStore((state) => state.setYesToken);
+  const setNoToken = useStore((state) => state.setNoToken);
+  const setPoolToken = useStore((state) => state.setPoolToken);
+  const setYesTokenReserves = useStore((state) => state.setYesTokenReserves);
+  const setNoTokenReserves = useStore((state) => state.setNoTokenReserves);
 
   const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-  const OptIn = async () => {
-    try {
-      const params = await algodClient.getTransactionParams().do();
 
-      const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-        suggestedParams: {
-          ...params,
-        },
-        from: selectedAddress,
-        to: selectedAddress,
-        assetIndex: 10458941,
-        amount: 0,
-      });
+  useEffect(() => {
+    const queryGlobal = async () => {
+      const app = await algodClient.getApplicationByID(appId).do();
+      for (const [key, value] of Object.entries(
+        app["params"]["global-state"]
+      )) {
+        if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
+          //yes_token_key
+          setYesToken(value["value"]["uint"]);
+          console.log("Yes_token_key", value["value"]["uint"]);
+        }
+        if (value["key"] == "bm9fdG9rZW5fa2V5") {
+          //no_token_key
+          setNoToken(value["value"]["uint"]);
+          console.log("No_token_key", value["value"]["uint"]);
+        }
+        if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
+          //pool_token_key
+          setPoolToken(value["value"]["uint"]);
+          console.log("Pool_token_key", value["value"]["uint"]);
+        }
+      }
+    };
+    queryGlobal();
+  }, []);
 
-      const myAlgoConnect = new MyAlgoConnect();
-      const signedTxn = await myAlgoConnect.signTransaction(txn.toByte());
-      const response = await algodClient
-        .sendRawTransaction(signedTxn.blob)
-        .do();
-      console.log(response);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const setupAmm = async () => {
+  const supplyAmm = async (usdcAmount: number) => {
     try {
       const params = await algodClient.getTransactionParams().do();
 
@@ -55,44 +68,46 @@ const Pools = () => {
 
       const accounts = undefined;
       const foreignApps = undefined;
-      const foreignAssets = [assetId];
+      const foreignAssets = [usdcId, noToken, yesToken, poolToken];
       const closeRemainderTo = undefined;
-      const revocationTarget = undefined;
       const note = undefined;
-      const amount = 1000000;
+      const amount = 2000;
+
+      usdcAmount = usdcAmount * 1000000;
 
       const txn1 = algosdk.makePaymentTxnWithSuggestedParams(
         selectedAddress,
-        Contract,
+        contractAddress,
         amount,
         closeRemainderTo,
         note,
         params
       );
-      /*       const txn1 = algosdk.makeAssetTransferTxnWithSuggestedParams(
-        selectedAddress,
-        Contract,
-        closeRemainderTo,
-        revocationTarget,
-        +amount,
-        note,
-        assetId,
-        params
-      ); */
 
-      const txn2 = algosdk.makeApplicationNoOpTxn(
+      const txn2 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        suggestedParams: {
+          ...params,
+        },
+        from: selectedAddress,
+        to: contractAddress,
+        assetIndex: usdcId,
+        amount: usdcAmount,
+        note: note,
+      });
+
+      const txn3 = algosdk.makeApplicationNoOpTxn(
         selectedAddress,
         params,
         appId,
-        [enc.encode("setup")],
+        [enc.encode("supply")],
         accounts,
         foreignApps,
         foreignAssets
       );
 
-      const txnsArray = [txn1, txn2];
+      const txnsArray = [txn1, txn2, txn3];
       const groupID = algosdk.computeGroupID(txnsArray);
-      for (let i = 0; i < 2; i++) txnsArray[i].group = groupID;
+      for (let i = 0; i < 3; i++) txnsArray[i].group = groupID;
 
       const myAlgoConnect = new MyAlgoConnect();
       const signedTxns = await myAlgoConnect.signTransaction(
@@ -101,6 +116,124 @@ const Pools = () => {
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
+
+      console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const withdrawAmm = async (poolTokenAmount: number) => {
+    try {
+      const params = await algodClient.getTransactionParams().do();
+
+      const enc = new TextEncoder();
+
+      const accounts = undefined;
+      const foreignApps = undefined;
+      const foreignAssets = [usdcId, poolToken];
+      const closeRemainderTo = undefined;
+      const note = undefined;
+      const amount = 2000;
+
+      poolTokenAmount = poolTokenAmount * 1000000;
+
+      const txn1 = algosdk.makePaymentTxnWithSuggestedParams(
+        selectedAddress,
+        contractAddress,
+        amount,
+        closeRemainderTo,
+        note,
+        params
+      );
+
+      const txn2 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        suggestedParams: {
+          ...params,
+        },
+        from: selectedAddress,
+        to: contractAddress,
+        assetIndex: poolToken,
+        amount: poolTokenAmount,
+        note: note,
+      });
+
+      const txn3 = algosdk.makeApplicationNoOpTxn(
+        selectedAddress,
+        params,
+        appId,
+        [enc.encode("withdraw")],
+        accounts,
+        foreignApps,
+        foreignAssets
+      );
+
+      const txnsArray = [txn1, txn2, txn3];
+      const groupID = algosdk.computeGroupID(txnsArray);
+      for (let i = 0; i < 3; i++) txnsArray[i].group = groupID;
+
+      const myAlgoConnect = new MyAlgoConnect();
+      const signedTxns = await myAlgoConnect.signTransaction(
+        txnsArray.map((txn) => txn.toByte())
+      );
+      const response = await algodClient
+        .sendRawTransaction(signedTxns.map((tx) => tx.blob))
+        .do();
+
+      console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const OptIn = async () => {
+    try {
+      const params = await algodClient.getTransactionParams().do();
+      console.log(yesToken, noToken, poolToken);
+      const txn1 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        amount: 0,
+        from: selectedAddress,
+        suggestedParams: {
+          ...params,
+        },
+        to: selectedAddress,
+        assetIndex: yesToken,
+      });
+
+      const txn2 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        amount: 0,
+        from: selectedAddress,
+        suggestedParams: {
+          ...params,
+        },
+        to: selectedAddress,
+        assetIndex: noToken,
+      });
+
+      const txn3 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        amount: 0,
+        from: selectedAddress,
+        suggestedParams: {
+          ...params,
+        },
+        to: selectedAddress,
+        assetIndex: poolToken,
+      });
+      const txnsArray = [txn1, txn2, txn3];
+      const groupID = algosdk.computeGroupID(txnsArray);
+      for (let i = 0; i < 3; i++) txnsArray[i].group = groupID;
+
+      const myAlgoConnect = new MyAlgoConnect();
+      const signedTxns = await myAlgoConnect.signTransaction(
+        txnsArray.map((txn) => txn.toByte())
+      );
+      const response = await algodClient
+        .sendRawTransaction(signedTxns.map((tx) => tx.blob))
+        .do();
+      let transactionResponse = await algodClient
+        .pendingTransactionInformation(response.txId)
+        .do();
+      console.log(transactionResponse);
       console.log(response);
     } catch (err) {
       console.error(err);
@@ -118,29 +251,52 @@ const Pools = () => {
       shadow="xl"
     >
       <Stack>
-        <Button
-          onClick={() => {
-            if (selectedAddress) return OptIn();
-            if (!selectedAddress)
-              return connectToMyAlgo(setAddresses, selectAddress);
-          }}
-          m={4}
-          radius="xl"
-        >
-          {selectedAddress ? "Opt In to USDC" : "Connect to wallet"}
-        </Button>
+        <AmountContainer coin={algoCoin} setCoin={setAlgoCoin} />
 
-        <Button
-          onClick={() => {
-            if (selectedAddress) return setupAmm();
-            if (!selectedAddress)
-              return connectToMyAlgo(setAddresses, selectAddress);
-          }}
-          m={4}
-          radius="xl"
-        >
-          {selectedAddress ? "SetUp AMM" : "Connect to wallet"}
-        </Button>
+        {selectedAddress ? (
+          <>
+            <Button
+              onClick={() => {
+                if (selectedAddress && algoCoin.amount)
+                  return supplyAmm(algoCoin.amount);
+              }}
+              m={4}
+              radius="xl"
+            >
+              Supply to AMM {algoCoin.amount} {algoCoin.token}
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedAddress && algoCoin.amount)
+                  return withdrawAmm(algoCoin.amount);
+              }}
+              m={4}
+              radius="xl"
+            >
+              Withdraw from AMM {algoCoin.amount} {algoCoin.token}
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedAddress) return OptIn();
+              }}
+              m={4}
+              radius="xl"
+            >
+              Opt In to Pool assets
+            </Button>
+          </>
+        ) : (
+          <Button
+            onClick={() => {
+              if (!selectedAddress)
+                return connectToMyAlgo(setAddresses, selectAddress);
+            }}
+            m={4}
+            radius="xl"
+          >
+            Connect to wallet
+          </Button>
+        )}
       </Stack>
     </Paper>
   );

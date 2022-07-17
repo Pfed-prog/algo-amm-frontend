@@ -15,11 +15,13 @@
     "@types/node": "^18.0.3",
     "algosdk": "^1.18.1",
     "buffer": "^6.0.3",
+    "formidable": "^2.0.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-number-format": "^4.9.3",
     "react-router-dom": "^6.3.0",
     "reactstrap": "^9.1.1",
+    "superagent": "^8.0.0",
     "tabler-icons-react": "^1.52.0",
     "zustand": "^4.0.0-rc.1"
   },

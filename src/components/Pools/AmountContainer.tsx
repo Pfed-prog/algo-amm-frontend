@@ -12,21 +12,19 @@ const AmountContainer = ({ coin, setCoin }: AmountContainerProps) => {
         <NumberInput
           min={0}
           placeholder="0.0"
+          precision={3}
           value={coin?.amount}
           onChange={(e) => setCoin({ ...coin, amount: e })}
           size="xl"
-          hideControls
           variant="unstyled"
           pl={10}
         />
         <Select
-          data={["Yes", "No"]}
+          data={["USDC", "LP shares"]}
           label=""
-          placeholder={coin?.token === "Yes" ? "Yes" : "Select a Token"}
-          onChange={(e) => setCoin({ ...coin, token: e })}
+          placeholder={coin?.token === "USDC" ? "USDC" : "Select a Token"}
           radius="xl"
           mx="lg"
-          disabled={coin?.token === "USDC"}
         />
       </Group>
     </Paper>
