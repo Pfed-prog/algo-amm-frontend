@@ -43,12 +43,14 @@ const AccountButton = () => {
       </Menu>
     );
   return (
-    <Button
-      radius="xl"
-      onClick={() => connectToMyAlgo(setAddresses, selectAddress)}
-    >
-      Connect
-    </Button>
+    <>
+      <Button
+        radius="xl"
+        onClick={() => connectToMyAlgo(setAddresses, selectAddress)}
+      >
+        Connect
+      </Button>
+    </>
   );
 };
 

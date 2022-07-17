@@ -12,6 +12,7 @@ const AmountContainer = ({ coin, setCoin }: AmountContainerProps) => {
         <NumberInput
           min={0}
           placeholder="0.0"
+          precision={6}
           value={coin?.amount}
           onChange={(e) => setCoin({ ...coin, amount: e })}
           size="xl"

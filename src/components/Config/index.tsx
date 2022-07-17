@@ -77,6 +77,58 @@ const Config = () => {
     }
   };
 
+  const OptInPool = async () => {
+    try {
+      const params = await algodClient.getTransactionParams().do();
+
+      const txn1 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        amount: 0,
+        from: selectedAddress,
+        suggestedParams: {
+          ...params,
+        },
+        to: selectedAddress,
+        assetIndex: yesToken,
+      });
+
+      const txn2 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        amount: 0,
+        from: selectedAddress,
+        suggestedParams: {
+          ...params,
+        },
+        to: selectedAddress,
+        assetIndex: noToken,
+      });
+
+      const txn3 = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+        amount: 0,
+        from: selectedAddress,
+        suggestedParams: {
+          ...params,
+        },
+        to: selectedAddress,
+        assetIndex: poolToken,
+      });
+      const txnsArray = [txn1, txn2, txn3];
+      const groupID = algosdk.computeGroupID(txnsArray);
+      for (let i = 0; i < 3; i++) txnsArray[i].group = groupID;
+
+      const myAlgoConnect = new MyAlgoConnect();
+      const signedTxns = await myAlgoConnect.signTransaction(
+        txnsArray.map((txn) => txn.toByte())
+      );
+      const response = await algodClient
+        .sendRawTransaction(signedTxns.map((tx) => tx.blob))
+        .do();
+      let transactionResponse = await algodClient
+        .pendingTransactionInformation(response.txId)
+        .do();
+      console.log(transactionResponse);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   /*   const OptIn = async () => {
     try {
       const params = await algodClient.getTransactionParams().do();
@@ -191,6 +243,15 @@ const Config = () => {
               radius="xl"
             >
               Set up amm
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedAddress) return OptInPool();
+              }}
+              m={4}
+              radius="xl"
+            >
+              Opt In to Pool assets
             </Button>
           </>
         ) : (
