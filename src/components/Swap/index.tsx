@@ -84,33 +84,49 @@ const Swap = () => {
       for (const [key, value] of Object.entries(
         app["params"]["global-state"]
       )) {
+        // @ts-ignore
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
+          // @ts-ignore
           setYesToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "bm9fdG9rZW5fa2V5") {
           //no_token_key
+          // @ts-ignore
           setNoToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
           //pool_token_key
+          // @ts-ignore
           setPoolToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "eWVzX3Rva2Vuc19yZXNlcnZlcw==") {
           //yes_token_reserves
+          // @ts-ignore
           setYesTokenReserves(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "bm9fdG9rZW5zX3Jlc2VydmVz") {
           //no_tokens_reserves
+          // @ts-ignore
           setNoTokenReserves(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "dG9rZW5fZnVuZGluZ19yZXNlcnZlcw==") {
+          // @ts-ignore
           setTokenFundingReserves(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cG9vbF9mdW5kaW5nX3Jlc2VydmVz") {
+          // @ts-ignore
           setPoolFundingReserves(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cmVzdWx0") {
+          // @ts-ignore
           setResult(value["value"]["uint"]);
         }
       }

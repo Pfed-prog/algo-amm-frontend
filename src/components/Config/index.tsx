@@ -35,16 +35,22 @@ const Config = () => {
       for (const [key, value] of Object.entries(
         app["params"]["global-state"]
       )) {
+        // @ts-ignore
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
+          // @ts-ignore
           setYesToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "bm9fdG9rZW5fa2V5") {
           //no_token_key
+          // @ts-ignore
           setNoToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
           //pool_token_key
+          // @ts-ignore
           setPoolToken(value["value"]["uint"]);
         }
       }

@@ -48,25 +48,37 @@ const Pools = () => {
       for (const [key, value] of Object.entries(
         app["params"]["global-state"]
       )) {
+        // @ts-ignore
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
+          // @ts-ignore
           setYesToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "bm9fdG9rZW5fa2V5") {
           //no_token_key
+          // @ts-ignore
           setNoToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
           //pool_token_key
+          // @ts-ignore
           setPoolToken(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cmVzdWx0") {
+          // @ts-ignore
           setResult(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cG9vbF9mdW5kaW5nX3Jlc2VydmVz") {
+          // @ts-ignore
           setPoolFundingReserves(value["value"]["uint"]);
         }
+        // @ts-ignore
         if (value["key"] == "cG9vbF90b2tlbnNfb3V0c3RhbmRpbmdfa2V5") {
+          // @ts-ignore
           setPoolTokensOutstanding(value["value"]["uint"]);
         }
       }
