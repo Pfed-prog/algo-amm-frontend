@@ -236,7 +236,7 @@ const Pools = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              {poolFundingReserves / 1000000} USDC
+              USDC: {poolFundingReserves / 1000000}
             </Text>
             <Text
               component="span"
@@ -247,7 +247,7 @@ const Pools = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              {poolTokensOutstanding / 1000000} LP Tokens
+              LP Tokens: {poolTokensOutstanding / 1000000}
             </Text>
           </>
         ) : (
