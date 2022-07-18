@@ -11,8 +11,8 @@ const AmountContainer = ({ coin, setCoin }: AmountContainerProps) => {
       <Group position="apart" spacing="xs">
         <NumberInput
           min={0}
-          placeholder="0.0"
-          precision={3}
+          defaultValue={0}
+          precision={6}
           value={coin?.amount}
           onChange={(e) => setCoin({ ...coin, amount: e })}
           size="xl"
@@ -20,7 +20,7 @@ const AmountContainer = ({ coin, setCoin }: AmountContainerProps) => {
           pl={10}
         />
         <Select
-          data={["USDC", "LP shares"]}
+          data={["USDC"]}
           label=""
           placeholder={coin?.token === "USDC" ? "USDC" : "Select a Token"}
           radius="xl"

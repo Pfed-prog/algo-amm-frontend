@@ -1,4 +1,4 @@
-import { Paper, Stack, Button, Group, Badge } from "@mantine/core";
+import { Paper, Stack, Button, Group, Badge, Text } from "@mantine/core";
 import { useState, useEffect } from "react";
 import AmountContainer from "./AmountContainer";
 import { connectToMyAlgo } from "../../lib/connectWallet";
@@ -211,28 +211,58 @@ const Pools = () => {
     >
       <Stack>
         {result > 0 ? (
-          <Group>
-            <Badge
-              size="xl"
-              radius="xl"
-              color="teal"
-              component="a"
-              sx={{ paddingLeft: 13 }}
-            >
-              <h3> {poolFundingReserves / 1000000} USDC Reserves </h3>
+          <>
+            <Badge size="xl" radius="xl" color="gold" component="a">
+              Reserves:
             </Badge>
-            <Badge
-              size="lg"
-              radius="xl"
+            <Text
+              component="span"
+              align="center"
               variant="gradient"
-              component="a"
-              sx={{ paddingRight: 13 }}
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              <h3> {poolTokensOutstanding / 1000000} LP Tokens </h3>
-            </Badge>
-          </Group>
+              {poolFundingReserves / 1000000} USDC
+            </Text>
+            <Text
+              component="span"
+              align="center"
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
+            >
+              {poolTokensOutstanding / 1000000} LP Tokens
+            </Text>
+          </>
         ) : (
-          ""
+          <>
+            <Text
+              component="span"
+              align="center"
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
+            >
+              Pool USDC Reserves: {poolFundingReserves / 1000000}
+            </Text>
+            <Text
+              component="span"
+              align="center"
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
+            >
+              LP Tokens Outstanding: {poolTokensOutstanding / 1000000}
+            </Text>
+          </>
         )}
         <AmountContainer coin={algoCoin} setCoin={setAlgoCoin} />
 
@@ -247,22 +277,41 @@ const Pools = () => {
                 m={4}
                 radius="xl"
               >
-                Withdraw from AMM:{" "}
-                {(algoCoin.amount * (poolFundingReserves / 1000000)) /
-                  (poolTokensOutstanding / 1000000)}{" "}
-                USDC
+                Withdraw from AMM
+                {algoCoin.amount
+                  ? (algoCoin.amount * (poolFundingReserves / 1000000)) /
+                      (poolTokensOutstanding / 1000000) +
+                    "USDC"
+                  : ""}
               </Button>
             ) : (
-              <Button
-                onClick={() => {
-                  if (selectedAddress && algoCoin.amount)
-                    return supplyAmm(algoCoin.amount);
-                }}
-                m={4}
-                radius="xl"
-              >
-                Supply to AMM {algoCoin.amount} {algoCoin.token}
-              </Button>
+              <>
+                <Button
+                  onClick={() => {
+                    if (selectedAddress && algoCoin.amount)
+                      return supplyAmm(algoCoin.amount);
+                  }}
+                  m={4}
+                  radius="xl"
+                >
+                  Supply to AMM {algoCoin.amount} {algoCoin.token}
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (selectedAddress && algoCoin.amount)
+                      return withdrawAmm(algoCoin.amount);
+                  }}
+                  m={4}
+                  radius="xl"
+                >
+                  Withdraw from AMM{" "}
+                  {algoCoin.amount && poolTokensOutstanding
+                    ? (algoCoin?.amount * (poolFundingReserves / 1000000)) /
+                        (poolTokensOutstanding / 1000000) +
+                      " USDC"
+                    : ""}
+                </Button>
+              </>
             )}
           </>
         ) : (

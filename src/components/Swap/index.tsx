@@ -1,4 +1,12 @@
-import { Paper, Stack, Button, Group, Badge } from "@mantine/core";
+import {
+  Paper,
+  Stack,
+  Button,
+  Group,
+  Badge,
+  Text,
+  Center,
+} from "@mantine/core";
 import { useEffect, useState } from "react";
 import { connectToMyAlgo } from "../../lib/connectWallet";
 import { useStore } from "../../store";
@@ -21,6 +29,7 @@ const Swap = () => {
   const yesTokenReserves = useStore((state) => state.yesTokenReserves);
   const noTokenReserves = useStore((state) => state.noTokenReserves);
   const tokenFundingReserves = useStore((state) => state.tokenFundingReserves);
+  const poolFundingReserves = useStore((state) => state.poolFundingReserves);
   const result = useStore((state) => state.result);
   const selectedAddress = useStore((state) => state.selectedAddress);
   const setAddresses = useStore((state) => state.setAddresses);
@@ -28,12 +37,15 @@ const Swap = () => {
   const setYesToken = useStore((state) => state.setYesToken);
   const setNoToken = useStore((state) => state.setNoToken);
   const setPoolToken = useStore((state) => state.setPoolToken);
-
   const setYesTokenReserves = useStore((state) => state.setYesTokenReserves);
   const setNoTokenReserves = useStore((state) => state.setNoTokenReserves);
   const setTokenFundingReserves = useStore(
     (state) => state.setTokenFundingReserves
   );
+  const setPoolFundingReserves = useStore(
+    (state) => state.setPoolFundingReserves
+  );
+
   const setResult = useStore((state) => state.setResult);
 
   const [coin_2, setCoin_2] = useState<Coin>({
@@ -42,13 +54,19 @@ const Swap = () => {
 
   const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 
-  const amountOut = (
-    reservesIn: number,
-    reservesA: number,
-    reservesB: number
-  ) => {
-    const reservesOut = (reservesIn * reservesA) / (reservesIn + reservesB);
-    return reservesOut;
+  const amountOut = (reservesIn: number, tokenName: string) => {
+    if (tokenName == "Yes") {
+      const reservesA = yesTokenReserves / 1000000;
+      const reservesB = noTokenReserves / 1000000;
+      const reservesOut = (reservesIn * reservesA) / (reservesIn + reservesB);
+      return reservesOut;
+    }
+    if (tokenName == "No") {
+      const reservesA = noTokenReserves / 1000000;
+      const reservesB = yesTokenReserves / 1000000;
+      const reservesOut = (reservesIn * reservesA) / (reservesIn + reservesB);
+      return reservesOut;
+    }
   };
 
   const whoWon = () => {
@@ -89,6 +107,9 @@ const Swap = () => {
         if (value["key"] == "dG9rZW5fZnVuZGluZ19yZXNlcnZlcw==") {
           setTokenFundingReserves(value["value"]["uint"]);
         }
+        if (value["key"] == "cG9vbF9mdW5kaW5nX3Jlc2VydmVz") {
+          setPoolFundingReserves(value["value"]["uint"]);
+        }
         if (value["key"] == "cmVzdWx0") {
           setResult(value["value"]["uint"]);
         }
@@ -119,7 +140,6 @@ const Swap = () => {
       const amount = 2000;
 
       usdcAmount = usdcAmount * 1000000;
-      //console.log(choice);
 
       const txn1 = algosdk.makePaymentTxnWithSuggestedParams(
         selectedAddress,
@@ -171,7 +191,6 @@ const Swap = () => {
 
   const redeem = async (tokenAmount: number, tokenName: string) => {
     try {
-      console.log(12);
       let tokenId = 0;
       if (tokenName == "Yes") {
         tokenId = yesToken;
@@ -252,60 +271,110 @@ const Swap = () => {
     >
       <Stack>
         {result > 0 ? (
-          <Group>
-            <Badge
-              size="xl"
-              radius="xl"
-              color="teal"
-              component="a"
-              sx={{ paddingLeft: 13 }}
-            >
+          <>
+            <Badge size="xl" radius="xl" color="teal">
               <h3> Winner: {whoWon()}</h3>
             </Badge>
-            <Badge
-              size="lg"
-              radius="xl"
+
+            <Text
+              component="span"
+              align="center"
               variant="gradient"
-              component="a"
-              sx={{ paddingRight: 13 }}
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              <h3>
-                Funding left to withdraw: {tokenFundingReserves / 1000000}
-              </h3>
-            </Badge>
-          </Group>
+              USDC left to withdraw: {tokenFundingReserves / 1000000}
+            </Text>
+
+            <Text
+              component="span"
+              align="center"
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
+            >
+              {whoWon()} left to withdraw: {tokenFundingReserves / 1000000 / 2}
+            </Text>
+          </>
         ) : (
-          <Group>
-            <Badge size="xl" radius="xl" color="teal" sx={{ paddingLeft: 13 }}>
-              <h3>
-                Yes Reserves: {yesTokenReserves / 1000000}; No Reserves
-                {noTokenReserves / 1000000}
-              </h3>
-            </Badge>
-            <Badge variant="outline" sx={{ paddingLeft: 3 }}>
-              Funding left to withdraw: {tokenFundingReserves / 1000000}
-            </Badge>
-          </Group>
+          <>
+            <Text
+              component="span"
+              align="center"
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
+            >
+              Token Funding Reserves: {tokenFundingReserves / 1000000} USDC
+            </Text>
+            <Text
+              component="span"
+              align="center"
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+              size="xl"
+              weight={700}
+              style={{ fontFamily: "Greycliff CF, sans-serif" }}
+            >
+              Pool Funding Reserves: {poolFundingReserves / 1000000} USDC
+            </Text>
+            <Group position="center">
+              <Badge size="xl" radius="xl" color="teal">
+                Yes Reserves: {yesTokenReserves / 1000000}
+              </Badge>
+              <Badge size="xl" radius="xl" color="teal">
+                No Reserves: {noTokenReserves / 1000000}
+              </Badge>
+            </Group>
+            <Center>
+              <Badge size="xl" radius="xl" color="indigo" variant="light">
+                Odds:{" "}
+                {(noTokenReserves / (yesTokenReserves + noTokenReserves)) * 100}{" "}
+                % Yes
+              </Badge>
+            </Center>
+          </>
         )}
 
         <AmountContainer coin={coin_2} setCoin={setCoin_2} />
         {result == 0 ? (
-          <Button
-            onClick={() => {
-              if (!selectedAddress)
-                return connectToMyAlgo(setAddresses, selectAddress);
-              if (selectedAddress && coin_2?.amount)
-                return swap(coin_2?.amount, coin_2?.token);
-            }}
-            m={4}
-            radius="xl"
-          >
-            {selectedAddress ? "Swap" : "Connect to wallet"}
-          </Button>
+          <>
+            <Button
+              onClick={() => {
+                if (!selectedAddress)
+                  return connectToMyAlgo(setAddresses, selectAddress);
+                if (selectedAddress && coin_2?.amount)
+                  return swap(coin_2?.amount, coin_2?.token);
+              }}
+              m={4}
+              radius="xl"
+            >
+              {selectedAddress ? "Swap" : "Connect to wallet"}
+            </Button>
+
+            {coin_2.amount ? (
+              <Text
+                component="span"
+                align="center"
+                variant="gradient"
+                gradient={{ from: "indigo", to: "cyan", deg: 45 }}
+                size="xl"
+                weight={700}
+                style={{ fontFamily: "Greycliff CF, sans-serif" }}
+              >
+                {amountOut(coin_2.amount, coin_2.token)}
+              </Text>
+            ) : (
+              ""
+            )}
+          </>
         ) : (
-          ""
-        )}
-        {selectedAddress && result > 0 ? (
           <Button
             onClick={() => {
               if (!selectedAddress)
@@ -316,10 +385,8 @@ const Swap = () => {
             m={4}
             radius="xl"
           >
-            Redeem
+            {selectedAddress ? "Redeem" : "Connect to wallet"}
           </Button>
-        ) : (
-          ""
         )}
       </Stack>
     </Paper>

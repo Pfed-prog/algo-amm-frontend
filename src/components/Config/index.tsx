@@ -1,8 +1,11 @@
 import { Paper, Stack, Button } from "@mantine/core";
-import { useStore } from "../../store";
-import { appId, usdcId, contractAddress } from "../../contracts";
+import { useEffect } from "react";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
+
+import { useStore } from "../../store";
+import { appId, usdcId, contractAddress } from "../../contracts";
+import { connectToMyAlgo } from "../../lib/connectWallet";
 
 const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
 const algodPort = "";
@@ -12,14 +15,42 @@ const algodToken = {
 
 const Config = () => {
   const selectedAddress = useStore((state) => state.selectedAddress);
+  const yesToken = useStore((state) => state.yesToken);
+  const noToken = useStore((state) => state.noToken);
+  const poolToken = useStore((state) => state.poolToken);
 
   const setYesToken = useStore((state) => state.setYesToken);
   const setNoToken = useStore((state) => state.setNoToken);
   const setPoolToken = useStore((state) => state.setPoolToken);
+  const setAddresses = useStore((state) => state.setAddresses);
+  const selectAddress = useStore((state) => state.selectAddress);
   const setYesTokenReserves = useStore((state) => state.setYesTokenReserves);
   const setNoTokenReserves = useStore((state) => state.setNoTokenReserves);
 
   const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+
+  useEffect(() => {
+    const queryGlobal = async () => {
+      const app = await algodClient.getApplicationByID(appId).do();
+      for (const [key, value] of Object.entries(
+        app["params"]["global-state"]
+      )) {
+        if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
+          //yes_token_key
+          setYesToken(value["value"]["uint"]);
+        }
+        if (value["key"] == "bm9fdG9rZW5fa2V5") {
+          //no_token_key
+          setNoToken(value["value"]["uint"]);
+        }
+        if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
+          //pool_token_key
+          setPoolToken(value["value"]["uint"]);
+        }
+      }
+    };
+    queryGlobal();
+  }, []);
 
   const setupAmm = async () => {
     try {
@@ -65,13 +96,7 @@ const Config = () => {
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
 
-      let transactionResponse = await algodClient
-        .pendingTransactionInformation(response.txId)
-        .do();
-      console.log("Called app-id:", transactionResponse["txn"]["txn"]["apid"]);
-      console.log(transactionResponse);
-      console.log(response);
-      //console.log(confirmedTxn);
+      console.log(response["txId"]);
     } catch (err) {
       console.error(err);
     }
@@ -118,13 +143,12 @@ const Config = () => {
       const signedTxns = await myAlgoConnect.signTransaction(
         txnsArray.map((txn) => txn.toByte())
       );
+
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
-      let transactionResponse = await algodClient
-        .pendingTransactionInformation(response.txId)
-        .do();
-      console.log(transactionResponse);
+
+      console.log(response["txId"]);
     } catch (err) {
       console.error(err);
     }
@@ -159,7 +183,7 @@ const Config = () => {
     }
   };
  */
-  const queryGlobal = async () => {
+  /*   const queryGlobal = async () => {
     const app = await algodClient.getApplicationByID(appId).do();
     for (const [key, value] of Object.entries(app["params"]["global-state"])) {
       if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
@@ -220,9 +244,8 @@ const Config = () => {
         console.log("min_increment_key", value["value"]["uint"]);
       }
     }
-  };
+  }; */
 
-  //TODO: Add swap logic
   return (
     <Paper
       mx="auto"
@@ -242,7 +265,7 @@ const Config = () => {
               m={4}
               radius="xl"
             >
-              Set up amm
+              Start AMM
             </Button>
             <Button
               onClick={() => {
@@ -255,18 +278,16 @@ const Config = () => {
             </Button>
           </>
         ) : (
-          ""
+          <Button
+            onClick={() => {
+              return connectToMyAlgo(setAddresses, selectAddress);
+            }}
+            m={4}
+            radius="xl"
+          >
+            {selectedAddress ? "Swap" : "Connect to wallet"}
+          </Button>
         )}
-
-        <Button
-          onClick={() => {
-            queryGlobal();
-          }}
-          m={4}
-          radius="xl"
-        >
-          Query
-        </Button>
       </Stack>
     </Paper>
   );
