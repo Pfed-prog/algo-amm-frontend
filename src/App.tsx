@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppShell, useMantineTheme } from "@mantine/core";
-import NotFoundPage from "./pages/NotFound";
 import Sidebar from "./components/Layout/Sidebar";
 import Heading from "./components/Layout/Heading";
+import NotFoundPage from "./pages/NotFound";
 import Pools from "./pages/Pools";
 import Swap from "./pages/Swap";
+import Config from "./pages/Config";
+
 function App() {
   const theme = useMantineTheme();
   return (
@@ -28,6 +30,7 @@ function App() {
           <Route path="/" element={<Swap />} />
           <Route path="/swap" element={<Swap />} />
           <Route path="/pools" element={<Pools />} />
+          <Route path="/config" element={<Config />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AppShell>
