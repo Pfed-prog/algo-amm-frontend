@@ -236,7 +236,7 @@ const Pools = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              USDC: {poolFundingReserves / 1000000}
+              USDC: {(poolFundingReserves / 1000000).toFixed(6)}
             </Text>
             <Text
               component="span"
@@ -247,7 +247,7 @@ const Pools = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              LP Tokens: {poolTokensOutstanding / 1000000}
+              LP Tokens: {(poolTokensOutstanding / 1000000).toFixed(6)}
             </Text>
           </>
         ) : (
@@ -261,7 +261,7 @@ const Pools = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              Pool USDC Reserves: {poolFundingReserves / 1000000}
+              Pool USDC Reserves: {(poolFundingReserves / 1000000).toFixed(6)}
             </Text>
             <Text
               component="span"
@@ -272,7 +272,8 @@ const Pools = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              LP Tokens Outstanding: {poolTokensOutstanding / 1000000}
+              LP Tokens Outstanding:{" "}
+              {(poolTokensOutstanding / 1000000).toFixed(6)}
             </Text>
           </>
         )}
@@ -291,9 +292,10 @@ const Pools = () => {
               >
                 Withdraw from AMM
                 {algoCoin.amount
-                  ? (algoCoin.amount * (poolFundingReserves / 1000000)) /
-                      (poolTokensOutstanding / 1000000) +
-                    "USDC"
+                  ? (
+                      (algoCoin.amount * (poolFundingReserves / 1000000)) /
+                      (poolTokensOutstanding / 1000000)
+                    ).toFixed(6) + "USDC"
                   : ""}
               </Button>
             ) : (
@@ -318,9 +320,10 @@ const Pools = () => {
                 >
                   Withdraw from AMM{" "}
                   {algoCoin.amount && poolTokensOutstanding
-                    ? (algoCoin?.amount * (poolFundingReserves / 1000000)) /
-                        (poolTokensOutstanding / 1000000) +
-                      " USDC"
+                    ? (
+                        (algoCoin?.amount * (poolFundingReserves / 1000000)) /
+                        (poolTokensOutstanding / 1000000)
+                      ).toFixed(6) + " USDC"
                     : ""}
                 </Button>
               </>

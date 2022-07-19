@@ -59,13 +59,13 @@ const Swap = () => {
       const reservesA = yesTokenReserves / 1000000;
       const reservesB = noTokenReserves / 1000000;
       const reservesOut = (reservesIn * reservesA) / (reservesIn + reservesB);
-      return reservesOut;
+      return reservesOut.toFixed(6);
     }
     if (tokenName == "No") {
       const reservesA = noTokenReserves / 1000000;
       const reservesB = yesTokenReserves / 1000000;
       const reservesOut = (reservesIn * reservesA) / (reservesIn + reservesB);
-      return reservesOut;
+      return reservesOut.toFixed(6);
     }
   };
 
@@ -301,7 +301,8 @@ const Swap = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              USDC left to withdraw: {tokenFundingReserves / 1000000}
+              USDC left to withdraw:{" "}
+              {(tokenFundingReserves / 1000000).toFixed(6)}
             </Text>
 
             <Text
@@ -313,7 +314,8 @@ const Swap = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              {whoWon()} left to withdraw: {tokenFundingReserves / 1000000 / 2}
+              {whoWon()} left to withdraw:{" "}
+              {(tokenFundingReserves / 1000000 / 2).toFixed(6)}
             </Text>
           </>
         ) : (
@@ -327,7 +329,8 @@ const Swap = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              Token Funding Reserves: {tokenFundingReserves / 1000000} USDC
+              Token Funding Reserves:{" "}
+              {(tokenFundingReserves / 1000000).toFixed(6)} USDC
             </Text>
             <Text
               component="span"
@@ -338,23 +341,26 @@ const Swap = () => {
               weight={700}
               style={{ fontFamily: "Greycliff CF, sans-serif" }}
             >
-              Pool Funding Reserves: {poolFundingReserves / 1000000} USDC
+              Pool Funding Reserves:{" "}
+              {(poolFundingReserves / 1000000).toFixed(6)} USDC
             </Text>
             <Group position="center">
               <Badge size="xl" radius="xl" color="teal">
-                Yes Reserves: {yesTokenReserves / 1000000}
+                Yes Reserves: {(yesTokenReserves / 1000000).toFixed(6)}
               </Badge>
               <Badge size="xl" radius="xl" color="teal">
-                No Reserves: {noTokenReserves / 1000000}
+                No Reserves: {(noTokenReserves / 1000000).toFixed(6)}
               </Badge>
             </Group>
             <Center>
               {noTokenReserves ? (
                 <Badge size="xl" radius="xl" color="indigo" variant="light">
                   Odds:{" "}
-                  {(noTokenReserves / (yesTokenReserves + noTokenReserves)) *
-                    100}{" "}
-                  % Yes)
+                  {(
+                    (noTokenReserves / (yesTokenReserves + noTokenReserves)) *
+                    100
+                  ).toFixed(2)}{" "}
+                  % Yes
                 </Badge>
               ) : (
                 ""
