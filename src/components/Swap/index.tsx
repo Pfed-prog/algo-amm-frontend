@@ -349,11 +349,16 @@ const Swap = () => {
               </Badge>
             </Group>
             <Center>
-              <Badge size="xl" radius="xl" color="indigo" variant="light">
-                Odds:{" "}
-                {(noTokenReserves / (yesTokenReserves + noTokenReserves)) * 100}{" "}
-                % Yes
-              </Badge>
+              {noTokenReserves ? (
+                <Badge size="xl" radius="xl" color="indigo" variant="light">
+                  Odds:{" "}
+                  {(noTokenReserves / (yesTokenReserves + noTokenReserves)) *
+                    100}{" "}
+                  % Yes)
+                </Badge>
+              ) : (
+                ""
+              )}
             </Center>
           </>
         )}
