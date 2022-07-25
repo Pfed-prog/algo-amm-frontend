@@ -141,6 +141,7 @@ const Config = () => {
         to: selectedAddress,
         assetIndex: poolToken,
       });
+
       const txnsArray = [txn1, txn2, txn3];
       const groupID = algosdk.computeGroupID(txnsArray);
       for (let i = 0; i < 3; i++) txnsArray[i].group = groupID;
