@@ -23,6 +23,7 @@ const algodToken = {
 };
 
 const Swap = () => {
+  const [response, setResponse] = useState();
   const yesToken = useStore((state) => state.yesToken);
   const noToken = useStore((state) => state.noToken);
   const poolToken = useStore((state) => state.poolToken);
@@ -132,7 +133,7 @@ const Swap = () => {
       }
     };
     queryGlobal();
-  }, []);
+  }, [response]);
 
   const swap = async (usdcAmount: number, tokenName: string) => {
     try {
@@ -198,6 +199,8 @@ const Swap = () => {
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
+
+      setResponse(response);
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
     } catch (err) {
@@ -269,6 +272,7 @@ const Swap = () => {
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
+      setResponse(response);
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
     } catch (err) {

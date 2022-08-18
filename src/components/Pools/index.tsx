@@ -15,6 +15,7 @@ const algodToken = {
 };
 
 const Pools = () => {
+  const [response, setResponse] = useState();
   const [algoCoin, setAlgoCoin] = useState<Coin>({
     token: "USDC",
   });
@@ -84,7 +85,7 @@ const Pools = () => {
       }
     };
     queryGlobal();
-  }, []);
+  }, [response]);
 
   const supplyAmm = async (usdcAmount: number) => {
     try {
@@ -144,6 +145,7 @@ const Pools = () => {
         .do();
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
+      setResponse(response);
     } catch (err) {
       console.error(err);
     }
@@ -207,6 +209,7 @@ const Pools = () => {
         .do();
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
+      setResponse(response);
     } catch (err) {
       console.error(err);
     }
