@@ -1,4 +1,5 @@
 import MyAlgo from "@randlabs/myalgo-connect";
+
 const myAlgoWallet = new MyAlgo();
 
 export const connectToMyAlgo = async (set: Function, setAddress: Function) => {

@@ -32,25 +32,27 @@ const Config = () => {
   useEffect(() => {
     const queryGlobal = async () => {
       const app = await algodClient.getApplicationByID(appId).do();
+      interface GlobalStateIndeces {
+        index: string;
+      }
       for (const [key, value] of Object.entries(
-        app["params"]["global-state"]
+        app["params"]["global-state"] as GlobalStateIndeces
       )) {
-        // @ts-ignore
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
-          // @ts-ignore
+
           setYesToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "bm9fdG9rZW5fa2V5") {
           //no_token_key
-          // @ts-ignore
+
           setNoToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
           //pool_token_key
-          // @ts-ignore
+
           setPoolToken(value["value"]["uint"]);
         }
       }

@@ -8,19 +8,20 @@ import {
   Center,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
+import MyAlgoConnect from "@randlabs/myalgo-connect";
+import algosdk from "algosdk";
+
 import { connectToMyAlgo } from "../../lib/connectWallet";
 import { useStore } from "../../store";
 import { appId, usdcId, contractAddress } from "../../contracts";
 import AmountContainer from "./AmountContainer";
 import { Coin } from "./types/pair";
-import MyAlgoConnect from "@randlabs/myalgo-connect";
-import algosdk from "algosdk";
 
 const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
-const algodPort = "";
 const algodToken = {
   "X-API-Key": "megX3xJK3V4p3ajxgjedO3EGhHcb0STgaWGpKUzh",
 };
+const port = "";
 
 const Swap = () => {
   const [response, setResponse] = useState();
@@ -53,7 +54,7 @@ const Swap = () => {
     token: "Yes",
   });
 
-  const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+  const algodClient = new algosdk.Algodv2(algodToken, algodServer, port);
 
   const amountOut = (reservesIn: number, tokenName: string) => {
     if (tokenName == "Yes") {
@@ -82,52 +83,53 @@ const Swap = () => {
   useEffect(() => {
     const queryGlobal = async () => {
       const app = await algodClient.getApplicationByID(appId).do();
+      interface GlobalStateIndeces {
+        index: string;
+      }
       for (const [key, value] of Object.entries(
-        app["params"]["global-state"]
+        app["params"]["global-state"] as GlobalStateIndeces
       )) {
-        // @ts-ignore
+        console.log(123);
+
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
-          // @ts-ignore
+
           setYesToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "bm9fdG9rZW5fa2V5") {
           //no_token_key
-          // @ts-ignore
+
           setNoToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
           //pool_token_key
-          // @ts-ignore
+
           setPoolToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "eWVzX3Rva2Vuc19yZXNlcnZlcw==") {
           //yes_token_reserves
-          // @ts-ignore
+
           setYesTokenReserves(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "bm9fdG9rZW5zX3Jlc2VydmVz") {
           //no_tokens_reserves
-          // @ts-ignore
+
           setNoTokenReserves(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "dG9rZW5fZnVuZGluZ19yZXNlcnZlcw==") {
-          // @ts-ignore
           setTokenFundingReserves(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cG9vbF9mdW5kaW5nX3Jlc2VydmVz") {
-          // @ts-ignore
           setPoolFundingReserves(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cmVzdWx0") {
-          // @ts-ignore
           setResult(value["value"]["uint"]);
         }
       }

@@ -1,18 +1,19 @@
-import { Paper, Stack, Button, Group, Badge, Text } from "@mantine/core";
+import { Paper, Stack, Button, Badge, Text } from "@mantine/core";
 import { useState, useEffect } from "react";
-import AmountContainer from "./AmountContainer";
-import { connectToMyAlgo } from "../../lib/connectWallet";
-import { useStore } from "../../store";
-import { appId, usdcId, contractAddress } from "../../contracts";
-import { Coin } from "./types/pair";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 
+import AmountContainer from "./AmountContainer";
+import { Coin } from "./types/pair";
+import { connectToMyAlgo } from "../../lib/connectWallet";
+import { useStore } from "../../store";
+import { appId, usdcId, contractAddress } from "../../contracts";
+
 const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
-const algodPort = "";
 const algodToken = {
   "X-API-Key": "megX3xJK3V4p3ajxgjedO3EGhHcb0STgaWGpKUzh",
 };
+const algodPort = "";
 
 const Pools = () => {
   const [response, setResponse] = useState();
@@ -46,40 +47,43 @@ const Pools = () => {
   useEffect(() => {
     const queryGlobal = async () => {
       const app = await algodClient.getApplicationByID(appId).do();
+
+      interface GlobalStateIndeces {
+        index: string;
+      }
+
       for (const [key, value] of Object.entries(
-        app["params"]["global-state"]
+        app["params"]["global-state"] as GlobalStateIndeces
       )) {
-        // @ts-ignore
+        console.log(value);
+        //console.log(key);
+
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
-          // @ts-ignore
           setYesToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "bm9fdG9rZW5fa2V5") {
           //no_token_key
-          // @ts-ignore
+
           setNoToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
           //pool_token_key
-          // @ts-ignore
+
           setPoolToken(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cmVzdWx0") {
-          // @ts-ignore
           setResult(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cG9vbF9mdW5kaW5nX3Jlc2VydmVz") {
-          // @ts-ignore
           setPoolFundingReserves(value["value"]["uint"]);
         }
-        // @ts-ignore
+
         if (value["key"] == "cG9vbF90b2tlbnNfb3V0c3RhbmRpbmdfa2V5") {
-          // @ts-ignore
           setPoolTokensOutstanding(value["value"]["uint"]);
         }
       }
