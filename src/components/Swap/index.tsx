@@ -11,12 +11,12 @@ import { useEffect, useState } from "react";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 
+import AmountContainer from "./AmountContainer";
 import { connectToMyAlgo } from "../../utils/connectWallet";
-import { connectAlgod } from "../../utils/connectAlgod";
+import { connectAlgod, waitForConfirmation } from "../../utils/connectAlgod";
 import { useStore } from "../../store/store";
 import { Coin, GlobalStateIndeces } from "../../store/types";
 import { appId, usdcId, contractAddress } from "../../contracts";
-import AmountContainer from "./AmountContainer";
 
 const Swap = () => {
   const [response, setResponse] = useState();
@@ -82,8 +82,6 @@ const Swap = () => {
       for (const [key, value] of Object.entries(
         app["params"]["global-state"] as GlobalStateIndeces
       )) {
-        console.log(123);
-
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
 
@@ -194,6 +192,7 @@ const Swap = () => {
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
+      await waitForConfirmation(algodClient, response.txId, 4);
 
       setResponse(response);
 
@@ -267,6 +266,8 @@ const Swap = () => {
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
+
+      await waitForConfirmation(algodClient, response.txId, 4);
       setResponse(response);
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);

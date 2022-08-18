@@ -4,11 +4,10 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 
 import AmountContainer from "./AmountContainer";
+import { useStore } from "../../store/store";
 import { Coin, GlobalStateIndeces } from "../../store/types";
-
 import { connectToMyAlgo } from "../../utils/connectWallet";
 import { connectAlgod, waitForConfirmation } from "../../utils/connectAlgod";
-import { useStore } from "../../store/store";
 import { appId, usdcId, contractAddress } from "../../contracts";
 
 const Pools = () => {
@@ -135,7 +134,6 @@ const Pools = () => {
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
 
-      console.log(response);
       await waitForConfirmation(algodClient, response.txId, 4);
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
@@ -201,6 +199,8 @@ const Pools = () => {
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
+
+      await waitForConfirmation(algodClient, response.txId, 4);
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
       setResponse(response);

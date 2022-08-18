@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppShell, useMantineTheme } from "@mantine/core";
+
 import Sidebar from "./components/Layout/Sidebar";
 import Heading from "./components/Layout/Heading";
 import NotFoundPage from "./pages/NotFound";
