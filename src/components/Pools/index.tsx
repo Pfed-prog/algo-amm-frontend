@@ -4,16 +4,12 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 
 import AmountContainer from "./AmountContainer";
-import { Coin } from "./types/pair";
-import { connectToMyAlgo } from "../../lib/connectWallet";
-import { useStore } from "../../store";
-import { appId, usdcId, contractAddress } from "../../contracts";
+import { Coin, GlobalStateIndeces } from "../../store/types";
 
-const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
-const algodToken = {
-  "X-API-Key": "megX3xJK3V4p3ajxgjedO3EGhHcb0STgaWGpKUzh",
-};
-const algodPort = "";
+import { connectToMyAlgo } from "../../utils/connectWallet";
+import { connectAlgod, waitForConfirmation } from "../../utils/connectAlgod";
+import { useStore } from "../../store/store";
+import { appId, usdcId, contractAddress } from "../../contracts";
 
 const Pools = () => {
   const [response, setResponse] = useState();
@@ -42,22 +38,15 @@ const Pools = () => {
   );
   const setResult = useStore((state) => state.setResult);
 
-  const algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+  const algodClient = connectAlgod();
 
   useEffect(() => {
     const queryGlobal = async () => {
       const app = await algodClient.getApplicationByID(appId).do();
 
-      interface GlobalStateIndeces {
-        index: string;
-      }
-
       for (const [key, value] of Object.entries(
         app["params"]["global-state"] as GlobalStateIndeces
       )) {
-        console.log(value);
-        //console.log(key);
-
         if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
           //yes_token_key
           setYesToken(value["value"]["uint"]);
@@ -65,13 +54,11 @@ const Pools = () => {
 
         if (value["key"] == "bm9fdG9rZW5fa2V5") {
           //no_token_key
-
           setNoToken(value["value"]["uint"]);
         }
 
         if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
           //pool_token_key
-
           setPoolToken(value["value"]["uint"]);
         }
 
@@ -147,6 +134,9 @@ const Pools = () => {
       const response = await algodClient
         .sendRawTransaction(signedTxns.map((tx) => tx.blob))
         .do();
+
+      console.log(response);
+      await waitForConfirmation(algodClient, response.txId, 4);
 
       console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
       setResponse(response);

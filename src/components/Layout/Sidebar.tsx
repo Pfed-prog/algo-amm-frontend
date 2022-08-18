@@ -1,6 +1,7 @@
 import { createStyles, Navbar, ScrollArea } from "@mantine/core";
 import { Link, useLocation } from "react-router-dom";
-import { useStore } from "../../store";
+
+import { useStore } from "../../store/store";
 import links from "../../utils/links";
 
 const useStyles = createStyles((theme, _params, getRef) => {

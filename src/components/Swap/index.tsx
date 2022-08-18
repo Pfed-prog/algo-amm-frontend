@@ -11,17 +11,12 @@ import { useEffect, useState } from "react";
 import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 
-import { connectToMyAlgo } from "../../lib/connectWallet";
-import { useStore } from "../../store";
+import { connectToMyAlgo } from "../../utils/connectWallet";
+import { connectAlgod } from "../../utils/connectAlgod";
+import { useStore } from "../../store/store";
+import { Coin, GlobalStateIndeces } from "../../store/types";
 import { appId, usdcId, contractAddress } from "../../contracts";
 import AmountContainer from "./AmountContainer";
-import { Coin } from "./types/pair";
-
-const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
-const algodToken = {
-  "X-API-Key": "megX3xJK3V4p3ajxgjedO3EGhHcb0STgaWGpKUzh",
-};
-const port = "";
 
 const Swap = () => {
   const [response, setResponse] = useState();
@@ -54,7 +49,7 @@ const Swap = () => {
     token: "Yes",
   });
 
-  const algodClient = new algosdk.Algodv2(algodToken, algodServer, port);
+  const algodClient = connectAlgod();
 
   const amountOut = (reservesIn: number, tokenName: string) => {
     if (tokenName == "Yes") {
@@ -83,9 +78,7 @@ const Swap = () => {
   useEffect(() => {
     const queryGlobal = async () => {
       const app = await algodClient.getApplicationByID(appId).do();
-      interface GlobalStateIndeces {
-        index: string;
-      }
+
       for (const [key, value] of Object.entries(
         app["params"]["global-state"] as GlobalStateIndeces
       )) {

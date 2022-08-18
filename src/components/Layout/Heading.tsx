@@ -6,7 +6,8 @@ import {
   Title,
   Group,
 } from "@mantine/core";
-import { useStore } from "../../store";
+
+import { useStore } from "../../store/store";
 import AccountButton from "../AccountButton";
 
 const Heading = () => {

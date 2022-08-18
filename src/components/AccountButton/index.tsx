@@ -1,7 +1,9 @@
 import { Button, Menu } from "@mantine/core";
 import { Door } from "tabler-icons-react";
-import { connectToMyAlgo } from "../../lib/connectWallet";
-import { useStore } from "../../store";
+
+import { connectToMyAlgo } from "../../utils/connectWallet";
+import { useStore } from "../../store/store";
+
 const AccountButton = () => {
   const addresses = useStore((state) => state.addresses);
   const setAddresses = useStore((state) => state.setAddresses);
