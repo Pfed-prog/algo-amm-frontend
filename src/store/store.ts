@@ -1,5 +1,10 @@
 import create, { State } from "zustand";
 
+export interface ResponseState extends State {
+  response: string[];
+  setResponse: (response: string[]) => void;
+}
+
 export interface StoreState extends State {
   open: boolean;
   addresses: string[];
@@ -58,4 +63,9 @@ export const useStore = create<StoreState>((set) => ({
   toggleOpen: () => set((state) => ({ open: !state.open })),
   selectAddress: (n) =>
     set((state) => ({ selectedAddress: state.addresses[n] })),
+}));
+
+export const useResponse = create<ResponseState>((set) => ({
+  response: [],
+  setResponse: (response: string[]) => set(() => ({ response: response })),
 }));

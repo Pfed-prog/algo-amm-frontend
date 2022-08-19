@@ -63,6 +63,8 @@ export const waitForConfirmation = async function (
   );
 };
 
+// console.log(Buffer.from(value["key"], "base64").toString());
+
 /*   const OptIn = async () => {
     try {
       const params = await algodClient.getTransactionParams().do();
