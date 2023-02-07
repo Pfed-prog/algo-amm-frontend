@@ -4,7 +4,7 @@ export const connectAlgod = () => {
   const algodServer = "https://testnet-algorand.api.purestake.io/ps2";
   const algodPort = "";
   const algodToken = {
-    "X-API-Key": "megX3xJK3V4p3ajxgjedO3EGhHcb0STgaWGpKUzh",
+    "X-API-Key": import.meta.env.VITE_API_KEY,
   };
 
   const algodClient = new Algodv2(algodToken, algodServer, algodPort);
