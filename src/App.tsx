@@ -1,12 +1,10 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppShell, useMantineTheme } from "@mantine/core";
 
-import Sidebar from "./components/Layout/Sidebar";
 import Heading from "./components/Layout/Heading";
+import Home from "./pages/Home";
 import NotFoundPage from "./pages/NotFound";
-import Pools from "./pages/Pools";
-import Swap from "./pages/Swap";
-import Config from "./pages/Config";
+import Market from "./pages/Market";
 
 function App() {
   const theme = useMantineTheme();
@@ -24,14 +22,11 @@ function App() {
         navbarOffsetBreakpoint="sm"
         asideOffsetBreakpoint="sm"
         fixed
-        navbar={<Sidebar />}
         header={<Heading />}
       >
         <Routes>
-          <Route path="/" element={<Swap />} />
-          <Route path="/swap" element={<Swap />} />
-          <Route path="/pools" element={<Pools />} />
-          <Route path="/config" element={<Config />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/market/:id" element={<Market />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AppShell>

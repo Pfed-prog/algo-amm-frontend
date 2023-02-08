@@ -11,7 +11,7 @@ import {
   withdrawAmm,
 } from "../../services/transactions";
 
-const Pools = () => {
+const Pools = (contractAddress: string, appId: number) => {
   const response = useResponse((state) => state.response);
   const setResponse = useResponse((state) => state.setResponse);
 
@@ -43,6 +43,7 @@ const Pools = () => {
 
   useEffect(() => {
     queryGlobalPool(
+      appId,
       setYesToken,
       setNoToken,
       setPoolToken,
@@ -126,6 +127,8 @@ const Pools = () => {
                 onClick={() => {
                   if (selectedAddress && algoCoin.amount)
                     return withdrawAmm(
+                      contractAddress,
+                      appId,
                       algoCoin.amount,
                       selectedAddress,
                       poolToken,
@@ -149,6 +152,8 @@ const Pools = () => {
                   onClick={() => {
                     if (selectedAddress && algoCoin.amount)
                       return supplyAmm(
+                        contractAddress,
+                        appId,
                         algoCoin.amount,
                         selectedAddress,
                         yesToken,
@@ -166,6 +171,8 @@ const Pools = () => {
                   onClick={() => {
                     if (selectedAddress && algoCoin.amount)
                       return withdrawAmm(
+                        contractAddress,
+                        appId,
                         algoCoin.amount,
                         selectedAddress,
                         poolToken,

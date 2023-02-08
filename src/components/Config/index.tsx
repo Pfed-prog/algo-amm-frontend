@@ -9,7 +9,7 @@ import {
   queryGlobalConfig,
 } from "../../services/transactions";
 
-const Config = () => {
+const Config = (contractAddress: string, appId: number) => {
   const setResponse = useResponse((state) => state.setResponse);
 
   const selectedAddress = useStore((state) => state.selectedAddress);
@@ -24,7 +24,7 @@ const Config = () => {
   const selectAddress = useStore((state) => state.selectAddress);
 
   useEffect(() => {
-    queryGlobalConfig(setYesToken, setNoToken, setPoolToken);
+    queryGlobalConfig(appId, setYesToken, setNoToken, setPoolToken);
   }, []);
 
   return (
@@ -42,7 +42,12 @@ const Config = () => {
             <Button
               onClick={() => {
                 if (selectedAddress)
-                  return setupAmm(selectedAddress, setResponse);
+                  return setupAmm(
+                    contractAddress,
+                    appId,
+                    selectedAddress,
+                    setResponse
+                  );
               }}
               m={4}
               radius="xl"

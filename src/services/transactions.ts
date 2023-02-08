@@ -2,13 +2,15 @@ import MyAlgoConnect from "@randlabs/myalgo-connect";
 import algosdk from "algosdk";
 
 import { connectAlgod, waitForConfirmation } from "../utils/connectAlgod";
-import { appId, usdcId, contractAddress } from "../contracts";
+import { usdcId } from "../contracts";
 
-import { GlobalStateIndeces } from "../store/types";
+import { GlobalStateIndices } from "../store/types";
 
 const algodClient = connectAlgod();
 
 export const swap = async (
+  contractAddress: string,
+  appId: number,
   usdcAmount: number,
   tokenName: string,
   poolToken: number,
@@ -91,6 +93,8 @@ export const swap = async (
 };
 
 export const redeem = async (
+  contractAddress: string,
+  appId: number,
   tokenAmount: number,
   tokenName: string,
   yesToken: number,
@@ -172,6 +176,7 @@ export const redeem = async (
 };
 
 export const queryGlobalSwap = async (
+  appId: number,
   setYesToken: Function,
   setNoToken: Function,
   setPoolToken: Function,
@@ -184,7 +189,7 @@ export const queryGlobalSwap = async (
   const app = await algodClient.getApplicationByID(appId).do();
 
   for (const [key, value] of Object.entries(
-    app["params"]["global-state"] as GlobalStateIndeces
+    app["params"]["global-state"] as GlobalStateIndices
   )) {
     if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
       setYesToken(value["value"]["uint"]);
@@ -221,6 +226,7 @@ export const queryGlobalSwap = async (
 };
 
 export const queryGlobalPool = async (
+  appId: number,
   setYesToken: Function,
   setNoToken: Function,
   setPoolToken: Function,
@@ -231,7 +237,7 @@ export const queryGlobalPool = async (
   const app = await algodClient.getApplicationByID(appId).do();
 
   for (const [key, value] of Object.entries(
-    app["params"]["global-state"] as GlobalStateIndeces
+    app["params"]["global-state"] as GlobalStateIndices
   )) {
     if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
       setYesToken(value["value"]["uint"]);
@@ -257,6 +263,7 @@ export const queryGlobalPool = async (
 };
 
 export const queryGlobalConfig = async (
+  appId: number,
   setYesToken: Function,
   setNoToken: Function,
   setPoolToken: Function
@@ -264,7 +271,7 @@ export const queryGlobalConfig = async (
   const app = await algodClient.getApplicationByID(appId).do();
 
   for (const [key, value] of Object.entries(
-    app["params"]["global-state"] as GlobalStateIndeces
+    app["params"]["global-state"] as GlobalStateIndices
   )) {
     if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
       setYesToken(value["value"]["uint"]);
@@ -281,6 +288,8 @@ export const queryGlobalConfig = async (
 };
 
 export const setupAmm = async (
+  contractAddress: string,
+  appId: number,
   selectedAddress: string,
   setResponse: Function
 ) => {
@@ -401,6 +410,8 @@ export const OptInPool = async (
 };
 
 export const supplyAmm = async (
+  contractAddress: string,
+  appId: number,
   usdcAmount: number,
   selectedAddress: string,
   yesToken: number,
@@ -475,6 +486,8 @@ export const supplyAmm = async (
 };
 
 export const withdrawAmm = async (
+  contractAddress: string,
+  appId: number,
   poolTokenAmount: number,
   selectedAddress: string,
   poolToken: number,
@@ -542,5 +555,58 @@ export const withdrawAmm = async (
     console.log("https://testnet.algoexplorer.io/tx/" + response["txId"]);
   } catch (err) {
     console.error(err);
+  }
+};
+
+export const queryApp = async (
+  appId: number,
+  setYesToken: Function,
+  setNoToken: Function,
+  setPoolToken: Function,
+  setYesTokenReserves: Function,
+  setNoTokenReserves: Function,
+  setPoolTokensOutstanding: Function,
+  setPoolFundingReserves: Function,
+  setTokenFundingReserves: Function,
+  setResult: Function
+) => {
+  const app = await algodClient.getApplicationByID(appId).do();
+
+  for (const [key, value] of Object.entries(
+    app["params"]["global-state"] as GlobalStateIndices
+  )) {
+    if (value["key"] == "eWVzX3Rva2VuX2tleQ==") {
+      setYesToken(value["value"]["uint"]);
+    }
+    if (value["key"] == "bm9fdG9rZW5fa2V5") {
+      setNoToken(value["value"]["uint"]);
+    }
+
+    if (value["key"] == "eWVzX3Rva2Vuc19yZXNlcnZlcw==") {
+      setYesTokenReserves(value["value"]["uint"]);
+    }
+
+    if (value["key"] == "bm9fdG9rZW5zX3Jlc2VydmVz") {
+      setNoTokenReserves(value["value"]["uint"]);
+    }
+
+    if (value["key"] == "cG9vbF90b2tlbl9rZXk=") {
+      setPoolToken(value["value"]["uint"]);
+    }
+    if (value["key"] == "cG9vbF90b2tlbnNfb3V0c3RhbmRpbmdfa2V5") {
+      setPoolTokensOutstanding(value["value"]["uint"]);
+    }
+
+    if (value["key"] == "cG9vbF9mdW5kaW5nX3Jlc2VydmVz") {
+      setPoolFundingReserves(value["value"]["uint"]);
+    }
+
+    if (value["key"] == "dG9rZW5fZnVuZGluZ19yZXNlcnZlcw==") {
+      setTokenFundingReserves(value["value"]["uint"]);
+    }
+
+    if (value["key"] == "cmVzdWx0") {
+      setResult(value["value"]["uint"]);
+    }
   }
 };

@@ -1,4 +1,18 @@
-export const appId = 105639497;
 export const usdcId = 10458941;
-export const contractAddress =
-  "C5MTTIWVABNVG22TPGYETHVYVZCUD75F5SXOZR5A5L7CLQ6QHKWWTLKTSI";
+
+interface AMM {
+  appId: number;
+  contractAddress: string;
+  question: string;
+}
+
+type AMMnumber = number;
+
+export const AMMs: Record<AMMnumber, AMM> = {
+  105639497: {
+    appId: 105639497,
+    contractAddress:
+      "C5MTTIWVABNVG22TPGYETHVYVZCUD75F5SXOZR5A5L7CLQ6QHKWWTLKTSI",
+    question: "First Pool",
+  },
+};

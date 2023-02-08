@@ -15,7 +15,7 @@ import { swap, redeem, queryGlobalSwap } from "../../services/transactions";
 import { useStore, useResponse } from "../../store/store";
 import { Coin } from "../../store/types";
 
-const Swap = () => {
+const Swap = (contractAddress: string, appId: number) => {
   const response = useResponse((state) => state.response);
   const setResponse = useResponse((state) => state.setResponse);
 
@@ -74,6 +74,7 @@ const Swap = () => {
 
   useEffect(() => {
     queryGlobalSwap(
+      appId,
       setYesToken,
       setNoToken,
       setPoolToken,
@@ -171,9 +172,7 @@ const Swap = () => {
                   ).toFixed(2)}{" "}
                   % Yes
                 </Badge>
-              ) : (
-                ""
-              )}
+              ) : null}
             </Center>
           </>
         )}
@@ -187,6 +186,8 @@ const Swap = () => {
                   return connectToMyAlgo(setAddresses, selectAddress);
                 if (selectedAddress && coin_2?.amount)
                   return swap(
+                    contractAddress,
+                    appId,
                     coin_2?.amount,
                     coin_2?.token,
                     poolToken,
@@ -214,9 +215,7 @@ const Swap = () => {
               >
                 {amountOut(coin_2.amount, coin_2.token)}
               </Text>
-            ) : (
-              ""
-            )}
+            ) : null}
           </>
         ) : (
           <Button
@@ -225,6 +224,8 @@ const Swap = () => {
                 return connectToMyAlgo(setAddresses, selectAddress);
               if (selectedAddress && coin_2?.amount)
                 return redeem(
+                  contractAddress,
+                  appId,
                   coin_2?.amount,
                   coin_2?.token,
                   yesToken,

@@ -2,7 +2,7 @@ import { Group, NumberInput, Paper, Select } from "@mantine/core";
 
 import { AmountContainerProps } from "../../store/types";
 
-const AmountContainer = ({ coin, setCoin }: AmountContainerProps) => {
+const SwapAmountContainer = ({ coin, setCoin }: AmountContainerProps) => {
   return (
     <Paper radius="xl" shadow="md" withBorder py={10}>
       <Group position="apart" spacing="xs">
@@ -30,4 +30,4 @@ const AmountContainer = ({ coin, setCoin }: AmountContainerProps) => {
   );
 };
 
-export default AmountContainer;
+export default SwapAmountContainer;

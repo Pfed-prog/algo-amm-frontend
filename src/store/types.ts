@@ -13,6 +13,6 @@ export interface AmountContainerProps {
   setCoin: Function;
 }
 
-export interface GlobalStateIndeces {
-  indeces: Array<string>;
+export interface GlobalStateIndices {
+  indices: Array<string>;
 }

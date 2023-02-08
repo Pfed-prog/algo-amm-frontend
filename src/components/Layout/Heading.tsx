@@ -3,9 +3,10 @@ import {
   MediaQuery,
   Burger,
   useMantineTheme,
-  Title,
+  Text,
   Group,
 } from "@mantine/core";
+import { Link } from "react-router-dom";
 
 import { useStore } from "../../store/store";
 import AccountButton from "../AccountButton";
@@ -35,7 +36,16 @@ const Heading = () => {
             />
           </MediaQuery>
 
-          <Title sx={{ fontFamily: "Expletus Sans" }}>Algo AMM</Title>
+          <Text
+            sx={{ fontFamily: "Expletus Sans" }}
+            variant="link"
+            component={Link}
+            size="xl"
+            weight={700}
+            to={"/"}
+          >
+            Algo AMM
+          </Text>
         </Group>
 
         <AccountButton />
